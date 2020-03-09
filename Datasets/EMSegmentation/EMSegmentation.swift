@@ -33,8 +33,8 @@ public struct EM {
         localStorageDirectory: URL = FileManager.default.temporaryDirectory.appendingPathComponent(
             "EM", isDirectory: true)
     ) {
-        self.trainY = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/train-labels.tif", localStorageDirectory: localStorageDirectory, imagesFileName: "train", imagesFileExtension: "tif")
-        self.trainX = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/train-volume.tif", localStorageDirectory: localStorageDirectory, imagesFileName: "train", imagesFileExtension: "tif")
+        self.trainY = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/", localStorageDirectory: localStorageDirectory, imagesFileName: "train-volume", imagesFileExtension: "tif")
+        self.trainX = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/", localStorageDirectory: localStorageDirectory, imagesFileName: "test-volume", imagesFileExtension: "tif")
     }
 }
 
@@ -49,10 +49,17 @@ func fetchDataset(
     }
 
     let filePath = localStorageDirectory.appendingPathComponent(imagesFileName).appendingPathExtension(imagesFileExtension)
-    let destination = URL(fileURLWithPath: "/home/balli/")
-    let file = try! Data.init(contentsOf: remoteRoot)
-    print(file)
-    try! file.write(to: destination)
+    // let destination = URL(fileURLWithPath: "/home/balli/")
+    // let file = try! Data.init(contentsOf: remoteRoot)
+    // print(file)
+    // try! file.write(to: destination)
+    let file = DatasetUtilities.downloadResource(
+        filename: imagesFileName,
+        fileExtension: imagesFileExtension,
+        remoteRoot: remoteRoot,
+        localStorageDirectory: localStorageDirectory,
+        extract: false
+    )
 
     let Image = Python.import("PIL.Image")
     let np = Python.import("numpy")
