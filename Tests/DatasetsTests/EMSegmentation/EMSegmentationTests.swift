@@ -7,8 +7,8 @@ final class EMSegmentationTests: XCTestCase {
     func testCreateEMDataset() {
         let dataset = EM()
 
-        print(dataset.trainX)
-        XCTAssertEqual(1, 2)
+        XCTAssertEqual(dataset.trainX.shape, [1, 572, 572, 30]);
+        XCTAssertEqual(dataset.trainY.shape, [1, 388, 388, 30]); 
     }
 }
 

@@ -26,15 +26,15 @@ import Python
 #endif
 
 public struct EM {
-    public let trainX: Tensor<UInt8>
-    public let trainY: Tensor<UInt8>
+    public let trainX: Tensor<Float32>
+    public let trainY: Tensor<Float32>
 
     public init(
         localStorageDirectory: URL = FileManager.default.temporaryDirectory.appendingPathComponent(
             "EM", isDirectory: true)
     ) {
-        self.trainY = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/", localStorageDirectory: localStorageDirectory, imagesFileName: "train-volume", imagesFileExtension: "tif")
-        self.trainX = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/", localStorageDirectory: localStorageDirectory, imagesFileName: "test-volume", imagesFileExtension: "tif")
+        self.trainX = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/", localStorageDirectory: localStorageDirectory, imagesFileName: "train-volume", imagesFileExtension: "tif", crop: false)
+        self.trainY = fetchDataset(remoteURL: "http://brainiac2.mit.edu/isbi_challenge/sites/default/files/", localStorageDirectory: localStorageDirectory, imagesFileName: "test-volume", imagesFileExtension: "tif", crop: true)
     }
 }
 
@@ -42,18 +42,15 @@ func fetchDataset(
     remoteURL: String,
     localStorageDirectory: URL,
     imagesFileName: String,
-    imagesFileExtension: String
-) -> Tensor<UInt8> {
+    imagesFileExtension: String,
+    crop: Bool
+) -> Tensor<Float32> {
     guard let remoteRoot = URL(string: remoteURL) else {
         fatalError("Failed to create EM root url: \(remoteURL)")
     }
 
     let filePath = localStorageDirectory.appendingPathComponent(imagesFileName).appendingPathExtension(imagesFileExtension)
-    // let destination = URL(fileURLWithPath: "/home/balli/")
-    // let file = try! Data.init(contentsOf: remoteRoot)
-    // print(file)
-    // try! file.write(to: destination)
-    let file = DatasetUtilities.downloadResource(
+    DatasetUtilities.downloadResource(
         filename: imagesFileName,
         fileExtension: imagesFileExtension,
         remoteRoot: remoteRoot,
@@ -69,16 +66,22 @@ func fetchDataset(
         return Tensor(numpy: np.array(image))
     }
 
-    func resizeImage(image: Tensor<Float>, toShape: [Int]) -> Tensor<Float> {
-        return ZeroPadding2D(padding: (30, 30))(image.reshaped(to: TensorShape(toShape)))
+    func resizeImage(image: Tensor<UInt8>, toShape: [Int]) -> Tensor<Float> {
+        let im = Tensor<Float32>(image)
+        if(!crop) {
+            return ZeroPadding2D(padding: (30, 30))(im.reshaped(to: TensorShape(toShape)))
+        } 
+        else {
+            return im.reshaped(to: TensorShape(toShape)).slice(lowerBounds: [0, 62,62, 0], upperBounds: [1, 450, 450,1])
+        }
     }
 
-    let image = Tensor<Float>(tensor(image: Image.open(filePath.path), frame: 0) ?? Tensor<UInt8>([0]))
+    let image = Tensor<UInt8>(tensor(image: Image.open(filePath.path), frame: 0) ?? Tensor<UInt8>([0]))
     var data = resizeImage(image: image, toShape: [1, 512, 512, 1])
     for i in 1..<30 {
-        let im = Tensor<Float>(tensor(image: Image.open(filePath.path), frame: i) ?? Tensor<UInt8>([0]))
+        let im = Tensor<UInt8>(tensor(image: Image.open(filePath.path), frame: i) ?? Tensor<UInt8>([0]))
         let imData = resizeImage(image: im, toShape: [1, 512, 512, 1])
-        data = data.concatenated(with: imData, alongAxis: 3)
+        data = data.concatenated(with: imData, alongAxis: 0)
     }
-    return Tensor<UInt8>(data)
+    return data
 }

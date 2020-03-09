@@ -102,7 +102,7 @@ public struct UNet: Layer {
         self.convUpSample4 = ConvUpSample(upsampleSize: 2, filterShape: (2, 2, 128, 64))
         self.upDoubleConv4 = DoubleConv(kernelSize: 3, inFilters: 128, outFilters: 64)
         self.conv9 = Conv2D<Float>(filterShape: (2, 2, 64, 3), padding: .same, activation: relu)
-        self.conv10 = Conv2D<Float>(filterShape: (1, 1, 3, 2), activation: sigmoid)
+        self.conv10 = Conv2D<Float>(filterShape: (1, 1, 3, 1))
     }
 
     @differentiable

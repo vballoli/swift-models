@@ -21,6 +21,7 @@ let package = Package(
         .executable(name: "ResNet-CIFAR10", targets: ["ResNet-CIFAR10"]),
         .executable(name: "LeNet-MNIST", targets: ["LeNet-MNIST"]),
         .executable(name: "MobileNet-Imagenette", targets: ["MobileNet-Imagenette"]),
+        .executable(name: "UNet-EMSegmentation", targets: ["UNet-EMSegmentation"]),
         .executable(name: "GAN", targets: ["GAN"]),
         .executable(name: "DCGAN", targets: ["DCGAN"]),
         .executable(name: "BERT-CoLA", targets: ["BERT-CoLA"]),
@@ -66,6 +67,10 @@ let package = Package(
         .target(
             name: "MobileNet-Imagenette", dependencies: ["ImageClassificationModels", "Datasets"],
             path: "Examples/MobileNet-Imagenette"),
+        .target(
+            name: "UNet-EMSegmentation", dependencies: ["SegmentationModels", "Datasets"],
+            path: "Examples/UNet-EMSegmentation"
+        ),
         .target(
             name: "MiniGo", dependencies: ["ModelSupport"], path: "MiniGo", exclude: ["main.swift"]),
         .target(
