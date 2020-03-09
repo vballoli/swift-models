@@ -51,7 +51,7 @@ public enum DatasetUtilities {
         return localURL
     }
 
-    @discardableResult
+    @discardableResult  
     public static func fetchResource(
         filename: String,
         fileExtension: String,

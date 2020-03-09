@@ -30,6 +30,7 @@ let package = Package(
         .executable(name: "MiniGoDemo", targets: ["MiniGoDemo"]),
         .library(name: "Transformer", targets: ["Transformer"]),
         .executable(name: "TransformerDemo", targets: ["TransformerDemo"]),
+        //.library(name: "SegmentationModels", targets: ["SegmenationModels"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.7.0"),
@@ -92,5 +93,8 @@ let package = Package(
         .testTarget(name: "CheckpointTests", dependencies: ["ModelSupport"]),
         .target(
             name: "BERT-CoLA", dependencies: ["TextModels", "Datasets"], path: "Examples/BERT-CoLA"),
+        .target(
+            name: "SegmentationModels", path: "Models/SegmentationModels"),
+        .testTarget(name: "SegmentationModelsTests", dependencies: ["SegmentationModels"])
     ]
 )

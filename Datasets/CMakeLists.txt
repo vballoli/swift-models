@@ -10,7 +10,8 @@ add_library(Datasets
   Imagenette/Imagewoof.swift
   LabeledExample.swift
   MNIST/MNIST.swift
-  BostonHousing/BostonHousing.swift)
+  BostonHousing/BostonHousing.swift
+  EmSegmentation/EmSegmentation.swift)
 target_link_libraries(Datasets PUBLIC
   Batcher
   ModelSupport)
